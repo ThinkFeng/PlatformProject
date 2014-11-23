@@ -1,5 +1,6 @@
 VERSION 5.00
 Object = "{648A5603-2C6E-101B-82B6-000000000014}#1.1#0"; "MSCOMM32.OCX"
+Object = "{6FBA474E-43AC-11CE-9A0E-00AA0062BB4C}#1.0#0"; "SYSINFO.OCX"
 Begin VB.Form Form1 
    Caption         =   "Form1"
    ClientHeight    =   7335
@@ -10,23 +11,20 @@ Begin VB.Form Form1
    ScaleHeight     =   7335
    ScaleWidth      =   10335
    StartUpPosition =   1  '所有者中心
+   Begin SysInfoLib.SysInfo SysInfo1 
+      Left            =   1920
+      Top             =   120
+      _ExtentX        =   1005
+      _ExtentY        =   1005
+      _Version        =   393216
+   End
    Begin VB.TextBox Text1 
       Height          =   6615
       Left            =   3360
       MultiLine       =   -1  'True
-      TabIndex        =   13
-      Text            =   "主窗体.frx":0000
+      TabIndex        =   12
       Top             =   480
       Width           =   3135
-   End
-   Begin VB.CommandButton SearchPort 
-      Caption         =   "搜索空闲串口"
-      Height          =   300
-      Left            =   120
-      Style           =   1  'Graphical
-      TabIndex        =   12
-      Top             =   1200
-      Width           =   1695
    End
    Begin VB.CommandButton OpenPort 
       Caption         =   "打开串口"
@@ -38,9 +36,9 @@ Begin VB.Form Form1
    End
    Begin VB.ComboBox Combo_stop 
       Height          =   300
-      ItemData        =   "主窗体.frx":0006
+      ItemData        =   "主窗体.frx":0000
       Left            =   840
-      List            =   "主窗体.frx":0010
+      List            =   "主窗体.frx":0002
       TabIndex        =   10
       Text            =   "1"
       Top             =   3480
@@ -49,9 +47,9 @@ Begin VB.Form Form1
    Begin VB.ComboBox Combo_data 
       Appearance      =   0  'Flat
       Height          =   300
-      ItemData        =   "主窗体.frx":001C
+      ItemData        =   "主窗体.frx":0004
       Left            =   840
-      List            =   "主窗体.frx":0029
+      List            =   "主窗体.frx":0006
       TabIndex        =   9
       Text            =   "8"
       Top             =   3120
@@ -59,9 +57,9 @@ Begin VB.Form Form1
    End
    Begin VB.ComboBox Combo_check 
       Height          =   300
-      ItemData        =   "主窗体.frx":0039
+      ItemData        =   "主窗体.frx":0008
       Left            =   840
-      List            =   "主窗体.frx":0046
+      List            =   "主窗体.frx":000A
       TabIndex        =   8
       Text            =   "NONE"
       Top             =   2760
@@ -77,9 +75,9 @@ Begin VB.Form Form1
    End
    Begin VB.ComboBox COM 
       Height          =   300
-      ItemData        =   "主窗体.frx":005A
+      ItemData        =   "主窗体.frx":000C
       Left            =   840
-      List            =   "主窗体.frx":005C
+      List            =   "主窗体.frx":000E
       TabIndex        =   3
       Text            =   "COM"
       Top             =   840
@@ -126,6 +124,13 @@ Begin VB.Form Form1
          Top             =   360
          Width           =   975
       End
+   End
+   Begin VB.Label comlabel 
+      Height          =   255
+      Left            =   240
+      TabIndex        =   13
+      Top             =   1200
+      Width           =   1575
    End
    Begin VB.Shape ShapeDisp 
       BackStyle       =   1  'Opaque
@@ -180,14 +185,26 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+Public Sub SysInfo1_DeviceArrival(ByVal DeviceType As Long, ByVal DeviceID As Long, ByVal DeviceName As String, ByVal DeviceData As Long) '检测即插即用设备的插入
+Call COM_Check
+End Sub
+Private Sub SysInfo1_DeviceRemoveComplete(ByVal DeviceType As Long, ByVal DeviceID As Long, ByVal DeviceName As String, ByVal DeviceData As Long) '检测即插即用设备的拔出
+Call COM_Check
+End Sub
 Private Sub Command1_Click()
         MSComm1.PortOpen = False
         ShapeDisp.FillColor = vbRed
         OpenPort.Caption = "打开串口"
 End Sub
 
+
 Private Sub Form_Load()
 Call COM_Check
+
+With SysInfo1
+   
+End With
+
 End Sub
 Private Sub COM_Check()
   COM.Clear
@@ -268,8 +285,3 @@ uerror:
        ShapeDisp.FillColor = vbRed
        OpenPort.Caption = "打开串口"
 End Sub
-
-Private Sub SearchPort_Click()
-Call COM_Check
-End Sub
-
