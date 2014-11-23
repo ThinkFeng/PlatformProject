@@ -10,13 +10,14 @@ Begin VB.Form Form1
    ScaleHeight     =   7335
    ScaleWidth      =   10335
    StartUpPosition =   1  '所有者中心
-   Begin VB.CommandButton Command1 
-      Caption         =   "Command1"
-      Height          =   615
-      Left            =   480
+   Begin VB.TextBox Text1 
+      Height          =   6615
+      Left            =   3360
+      MultiLine       =   -1  'True
       TabIndex        =   13
-      Top             =   5160
-      Width           =   2295
+      Text            =   "主窗体.frx":0000
+      Top             =   480
+      Width           =   3135
    End
    Begin VB.CommandButton SearchPort 
       Caption         =   "搜索空闲串口"
@@ -30,16 +31,16 @@ Begin VB.Form Form1
    Begin VB.CommandButton OpenPort 
       Caption         =   "打开串口"
       Height          =   375
-      Left            =   720
+      Left            =   600
       TabIndex        =   11
       Top             =   3840
-      Width           =   1095
+      Width           =   1200
    End
    Begin VB.ComboBox Combo_stop 
       Height          =   300
-      ItemData        =   "主窗体.frx":0000
+      ItemData        =   "主窗体.frx":0006
       Left            =   840
-      List            =   "主窗体.frx":000A
+      List            =   "主窗体.frx":0010
       TabIndex        =   10
       Text            =   "1"
       Top             =   3480
@@ -48,9 +49,9 @@ Begin VB.Form Form1
    Begin VB.ComboBox Combo_data 
       Appearance      =   0  'Flat
       Height          =   300
-      ItemData        =   "主窗体.frx":0016
+      ItemData        =   "主窗体.frx":001C
       Left            =   840
-      List            =   "主窗体.frx":0023
+      List            =   "主窗体.frx":0029
       TabIndex        =   9
       Text            =   "8"
       Top             =   3120
@@ -58,9 +59,9 @@ Begin VB.Form Form1
    End
    Begin VB.ComboBox Combo_check 
       Height          =   300
-      ItemData        =   "主窗体.frx":0033
+      ItemData        =   "主窗体.frx":0039
       Left            =   840
-      List            =   "主窗体.frx":0040
+      List            =   "主窗体.frx":0046
       TabIndex        =   8
       Text            =   "NONE"
       Top             =   2760
@@ -76,9 +77,9 @@ Begin VB.Form Form1
    End
    Begin VB.ComboBox COM 
       Height          =   300
-      ItemData        =   "主窗体.frx":0054
+      ItemData        =   "主窗体.frx":005A
       Left            =   840
-      List            =   "主窗体.frx":0056
+      List            =   "主窗体.frx":005C
       TabIndex        =   3
       Text            =   "COM"
       Top             =   840
@@ -210,7 +211,14 @@ Private Sub COM_Check()
       COM.Text = COM.List(0)
     End If
   End Sub
-
+Private Sub MSComm1_OnComm()
+    Select Case MSComm1.CommEvent
+        Case comEvReceive '此处添加处理接收的代码
+        Text1.Text = Text1.Text & " " & MSComm1.Input
+        flag = False
+     End Select
+     
+End Sub
 Private Sub Form_QueryUnload(Cancel As Integer, UnloadMode As Integer)
 On Error GoTo ExitError
         MSComm1.PortOpen = False
@@ -223,7 +231,6 @@ Dim CheckString, MSCpro As String
 On Error GoTo uerror
     If OpenPort.Caption = "打开串口" Then
         MSComm1.CommPort = Val(Right(COM.Text, 1))
-        MSComm1.PortOpen = True '当True时是打开
         ShapeDisp.FillColor = vbGreen
         OpenPort.Caption = "关闭串口"
         If btl_h.Value = True Then btl = 115200
@@ -231,6 +238,9 @@ On Error GoTo uerror
         MSCpro = Str(btl) & ",N" & Str(Combo_data.Text) & "," & Str(Combo_stop.Text)
         MSComm1.Settings = MSCpro
         MSComm1.RThreshold = 1
+        MSComm1.InputMode = comInputModeText '以文本方式取回传入的数据
+        MSComm1.Handshaking = comRTSXOnXOff
+        MSComm1.PortOpen = True '当True时是打开
         '禁用参数设置项
         COM.Enabled = False
         botelv.Enabled = False
