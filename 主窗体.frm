@@ -103,7 +103,7 @@ Begin VB.Form Form1
          EndProperty
          Height          =   255
          Left            =   240
-         TabIndex        =   2
+         TabIndex        =   1
          Top             =   720
          Width           =   855
       End
@@ -120,7 +120,7 @@ Begin VB.Form Form1
          EndProperty
          Height          =   195
          Left            =   240
-         TabIndex        =   1
+         TabIndex        =   2
          Top             =   360
          Width           =   975
       End
@@ -200,11 +200,6 @@ End Sub
 
 Private Sub Form_Load()
 Call COM_Check
-
-With SysInfo1
-   
-End With
-
 End Sub
 Private Sub COM_Check()
   COM.Clear
@@ -264,7 +259,6 @@ On Error GoTo uerror
         Combo_check.Enabled = False
         Combo_data.Enabled = False
         Combo_stop.Enabled = False
-        SearchPort.Enabled = False
         '禁用以上参数设置项
     Else
 
