@@ -4,13 +4,12 @@ Object = "{6FBA474E-43AC-11CE-9A0E-00AA0062BB4C}#1.0#0"; "SYSINFO.OCX"
 Begin VB.Form Form1 
    Caption         =   "Form1"
    ClientHeight    =   7335
-   ClientLeft      =   120
-   ClientTop       =   450
+   ClientLeft      =   6945
+   ClientTop       =   2175
    ClientWidth     =   10335
    LinkTopic       =   "Form1"
    ScaleHeight     =   7335
    ScaleWidth      =   10335
-   StartUpPosition =   1  '所有者中心
    Begin SysInfoLib.SysInfo SysInfo1 
       Left            =   1920
       Top             =   120
@@ -125,13 +124,6 @@ Begin VB.Form Form1
          Width           =   975
       End
    End
-   Begin VB.Label comlabel 
-      Height          =   255
-      Left            =   240
-      TabIndex        =   13
-      Top             =   1200
-      Width           =   1575
-   End
    Begin VB.Shape ShapeDisp 
       BackStyle       =   1  'Opaque
       BorderStyle     =   6  'Inside Solid
@@ -185,6 +177,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+Dim HData As String
 Public Sub SysInfo1_DeviceArrival(ByVal DeviceType As Long, ByVal DeviceID As Long, ByVal DeviceName As String, ByVal DeviceData As Long) '检测即插即用设备的插入
 Call COM_Check
 End Sub
@@ -217,12 +210,28 @@ Private Sub COM_Check()
     End If
   End Sub
 Private Sub MSComm1_OnComm()
-    Select Case MSComm1.CommEvent
-        Case comEvReceive '此处添加处理接收的代码
-        
-        
-     End Select
-     
+On Error Resume Next
+Dim BytesReceived() As Byte
+Dim buffer As String
+Dim i As Integer
+Select Case MSComm1.CommEvent
+  Case comEvReceive '接收十六进制数据。并以十六进制显示
+      'MSComm.InputLen = 0
+      buffer = MSComm1.Input '接收数据至字符串中
+      BytesReceived() = buffer '将数据转入Byte数组中
+      For i = 0 To UBound(BytesReceived) '显示结果以十六进制显示
+         If Len(Hex(BytesReceived(i))) = 1 Then
+            HData = HData & "0" & Hex(BytesReceived(i))
+         Else
+            HData = HData & Hex(BytesReceived(i))
+         End If
+      Next
+     Text1.Text = Text1.Text & HData
+     HData = ""
+            '最后将结果后入Text1中
+     MSComm.OutBufferCount = 0 '清除发送缓冲区
+     MSComm.InBufferCount = 0 '清除接收缓冲区
+End Select
 End Sub
 Private Sub Form_QueryUnload(Cancel As Integer, UnloadMode As Integer)
 On Error GoTo ExitError
@@ -243,10 +252,10 @@ On Error GoTo uerror
         MSCpro = Str(btl) & ",N" & Str(Combo_data.Text) & "," & Str(Combo_stop.Text)
         MSComm1.Settings = MSCpro
         MSComm1.RThreshold = 1
-        MSComm1.InputMode = comInputModeText '以文本方式取回传入的数据
-        MSComm1.Handshaking = comRTSXOnXOff
+        MSComm1.InputMode = comInputModeBinary   '以二进制方式取回传入的数据
+        'MSComm1.Handshaking = 0
         MSComm1.PortOpen = True '当True时是打开
-        MSComm1.InputLen = 0 '表示一次读取整个缓冲区,这样读取之后,缓冲区就自动被清空了
+        'MSComm1.InputLen = 0 '表示一次读取整个缓冲区,这样读取之后,缓冲区就自动被清空了
         '禁用参数设置项
         COM.Enabled = False
         botelv.Enabled = False
@@ -272,3 +281,4 @@ uerror:
        ShapeDisp.FillColor = vbRed
        OpenPort.Caption = "打开串口"
 End Sub
+

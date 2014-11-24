@@ -1,11 +1,12 @@
 Type=Exe
 Form=主窗体.frm
-Reference=*\G{00020430-0000-0000-C000-000000000046}#2.0#0#..\..\..\..\..\..\Windows\SysWOW64\stdole2.tlb#OLE Automation
+Reference=*\G{00020430-0000-0000-C000-000000000046}#2.0#0#..\..\..\..\..\..\..\Windows\SysWOW64\stdole2.tlb#OLE Automation
 Object={648A5603-2C6E-101B-82B6-000000000014}#1.1#0; MSCOMM32.OCX
 Object={6FBA474E-43AC-11CE-9A0E-00AA0062BB4C}#1.0#0; SYSINFO.OCX
 Module=Module1; Module.bas
 IconForm="Form1"
 Startup="Form1"
+ExeName32="工程.exe"
 Command32=""
 Name="工程1"
 HelpContextID="0"
