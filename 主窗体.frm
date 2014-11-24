@@ -191,13 +191,6 @@ End Sub
 Private Sub SysInfo1_DeviceRemoveComplete(ByVal DeviceType As Long, ByVal DeviceID As Long, ByVal DeviceName As String, ByVal DeviceData As Long) '检测即插即用设备的拔出
 Call COM_Check
 End Sub
-Private Sub Command1_Click()
-        MSComm1.PortOpen = False
-        ShapeDisp.FillColor = vbRed
-        OpenPort.Caption = "打开串口"
-End Sub
-
-
 Private Sub Form_Load()
 Call COM_Check
 End Sub
@@ -226,8 +219,8 @@ Private Sub COM_Check()
 Private Sub MSComm1_OnComm()
     Select Case MSComm1.CommEvent
         Case comEvReceive '此处添加处理接收的代码
-        Text1.Text = Text1.Text & " " & MSComm1.Input
-        flag = False
+        
+        
      End Select
      
 End Sub
@@ -253,6 +246,7 @@ On Error GoTo uerror
         MSComm1.InputMode = comInputModeText '以文本方式取回传入的数据
         MSComm1.Handshaking = comRTSXOnXOff
         MSComm1.PortOpen = True '当True时是打开
+        MSComm1.InputLen = 0 '表示一次读取整个缓冲区,这样读取之后,缓冲区就自动被清空了
         '禁用参数设置项
         COM.Enabled = False
         botelv.Enabled = False
@@ -271,7 +265,6 @@ On Error GoTo uerror
         Combo_check.Enabled = True
         Combo_data.Enabled = True
         Combo_stop.Enabled = True
-        SearchPort.Enabled = True
         '启用以上参数设置项
     End If
     Exit Sub
